@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secret Santa Name Drawing Tool</title>
+    <meta name="description" content="Simple html, javascript single page web app for pickin' secret santa names">
+</head>
+<body>
+    <form onsubmit="addName(); return false">
+        <input type="text" id="nameInput">
+        <input type="submit" value="Add Name">
+    </form>
+
+    <button onclick="calculate()">Calculate</button>
+
+
+
+    <div id="nameListDisplay"></div>
+
+    <div id="assignmentDisplay"></div>
+
+    <div id="calculatedDisplay"></div>
+
+    <button onclick="reset()">RESET</button>
+
+    <script type="text/JavaScript">
+        let nameInput = document.getElementById("nameInput");
+        let namesListDisplay = document.getElementById("nameListDisplay");
+        let assignmentDisplay = document.getElementById("assignmentDisplay");
+        let calculatedDisplay = document.getElementById("calculatedDisplay");
+
+        let namesList = [];
+        let assignedList = [];
+
+        displayNames();
+
+        function calculate() {
+            assignedList = [];
+            for (let i=0; i<namesList.length; i++) {
+                let randomIndex = -1;
+                let attempts = 0;
+                while(randomIndex == -1 || randomIndex == i || assignedList.indexOf(namesList[randomIndex]) != -1 ){
+                    randomIndex = Math.floor(Math.random() * namesList.length);
+                    attempts ++;
+                    if(attempts >= namesList.length) {
+                        calculate();
+                        return;
+                    }
+                }
+                assignedList.push(namesList[randomIndex]);
+            }
+
+            displayCalculated();
+        }
+
+        function displayCalculated(){
+            let html = '<ul>';
+            for (let i = 0; i<namesList.length; i++) {
+                html += '<li>' + namesList[i] + ' => ' + assignedList[i] + '</li>';
+            }
+            html += '</ul>';
+            calculatedDisplay.innerHTML = html;
+        };
+
+        function displayNames() {
+            let html = '<ul>';
+            for (let name of namesList) {
+                html += '<li>' + name + '</li>';
+            }
+            html += '</ul>';
+            namesListDisplay.innerHTML = html;
+        }
+
+        function addName() {
+            namesList.push(nameInput.value);
+            nameInput.value = '';
+            displayNames();
+        }
+
+        function reset() {
+            namesList = [];
+            assignedList = [];
+            calculatedDisplay.innerHTML = '';
+            namesListDisplay.innerHTML = '';
+
+        }
+
+
+    </script>
+    
+</body>
+</html>
